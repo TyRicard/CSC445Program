@@ -6,9 +6,7 @@ from AuxiliaryMethod import AuxiliaryMethod
 from OutputHandler import OutputHandler
 
 def main():
-    input_parser = InputParser()
-    file_name = InputParser.get_file_name(sys.argv)
-    standard_lp = InputParser.get_lp(file_name)
+    standard_lp = InputParser.get_lp()
 
     dictionary = Dictionary.create_dictionary_form(standard_lp)
     variables =  Dictionary.create_variables(dictionary)

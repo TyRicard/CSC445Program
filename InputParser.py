@@ -1,19 +1,7 @@
 from fractions import Fraction
+import sys
 
 class InputParser:
-
-    # Simple conditionals checking for the file_name
-    def get_file_name(arguments):
-        if len(arguments) < 2:
-            print("Not enough arguments were provided")
-            exit(1)
-
-        if len(arguments) > 2:
-            print("Too many arguments were provided")
-            exit(1)
-        
-        return arguments[1]
-
 
     def split_by_whitespace(line):
         if "\t" in line:
@@ -24,9 +12,8 @@ class InputParser:
 
 
     # Parsing the file for the necessary data
-    def get_lp(file_name):
-        file = open(file_name, 'r')
-        lp_string_lines = file.readlines()
+    def get_lp():
+        lp_string_lines = sys.stdin.readlines()
 
         is_first = True
         lp = []
