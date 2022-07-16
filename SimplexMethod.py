@@ -179,16 +179,16 @@ class SimplexMethod:
             # Determine leaving variable
             self.basic_leaving()
 
+            # Check for unboundedness
+            if Dictionary.is_unbounded(self.leaving):
+                self.handle_unbounded()
+                return
+                
             # Update degeneracy counter where required
             if self.dictionary_has_degenerate_pivot():
                 self.degeneracy_counter = self.degeneracy_counter + 1
             else:
                 self.degeneracy_counter = 0
-            
-            # Check for unboundedness
-            if Dictionary.is_unbounded(self.leaving):
-                self.handle_unbounded()
-                return
         
             # Pivot
             self.pivot()
