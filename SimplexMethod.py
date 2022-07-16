@@ -28,17 +28,6 @@ class SimplexMethod:
         return None
 
 
-    def dictionary_is_optimal(self):
-        for i in range(1, len(self.dictionary[0])):
-            if self.dictionary[0][i] > Fraction(0):
-                return False
-        return True
-
-
-    def dictionary_is_unbounded(self):
-        return self.leaving is None
-
-
     def dictionary_has_degenerate_pivot(self):
         leaving_row = self.leaving.get_row()
         if self.dictionary[leaving_row][0] == Fraction(0):
@@ -170,11 +159,11 @@ class SimplexMethod:
         return
 
 
-    def run_basic_method(self):
-        count = 0
+    def run_simplex(self):
+
         while(True):
             # Check for Optimal
-            if self.dictionary_is_optimal():
+            if Dictionary.is_optimal(self.dictionary):
                 self.handle_optimal()
                 return
             
@@ -194,7 +183,7 @@ class SimplexMethod:
                 self.degeneracy_counter = 0
             
             # Check for unboundedness
-            if self.dictionary_is_unbounded():
+            if Dictionary.is_unbounded(self.leaving):
                 self.handle_unbounded()
                 return
         

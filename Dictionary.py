@@ -35,6 +35,24 @@ class Dictionary:
             num_variables = num_variables + 1
         
         return variables
+
+    
+    def is_unbounded(leaving_variable):
+        return leaving_variable is None
+
+
+    def is_optimal(dictionary):
+        for i in range(1, len(dictionary[0])):
+            if dictionary[0][i] > Fraction(0):
+                return False
+        return True
+
+
+    def is_infeasible(dictionary):
+        for row in dictionary:
+            if row[0] < Fraction(0):
+                return True
+        return False
         
 
         

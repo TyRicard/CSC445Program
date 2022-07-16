@@ -2,6 +2,7 @@ import sys
 from InputParser import InputParser
 from Dictionary import Dictionary
 from SimplexMethod import SimplexMethod
+from AuxiliaryMethod import AuxiliaryMethod
 from OutputHandler import OutputHandler
 
 def main():
@@ -11,8 +12,21 @@ def main():
 
     dictionary = Dictionary.create_dictionary_form(standard_lp)
     variables =  Dictionary.create_variables(dictionary)
+
+    if Dictionary.is_infeasible(dictionary):
+        aux_simplex = AuxiliaryMethod(dictionary, variables)
+        aux_simplex.run_auxiliary()
+
+        if aux_simplex.status == "infeasible":
+            OutputHandler.print_infeasible()
+            exit(0)
+
+        dictionary = aux_simplex.dictionary
+        variables = aux_simplex.variables
+
     simplex = SimplexMethod(dictionary, variables)
-    simplex.run_basic_method()
+
+    simplex.run_simplex()
 
     OutputHandler.print_output(simplex)
 
