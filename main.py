@@ -18,7 +18,7 @@ def main():
         aux_simplex.run_auxiliary()
 
         if aux_simplex.status == "infeasible":
-            OutputHandler.print_infeasible()
+            OutputHandler.print_infeasible(aux_simplex)
             exit(0)
 
         dictionary = aux_simplex.dictionary
@@ -28,7 +28,11 @@ def main():
 
     simplex.run_simplex()
 
-    OutputHandler.print_output(simplex)
+    if simplex.status == "optimal":
+        OutputHandler.print_optimal(simplex)
+
+    elif simplex.status == "unbounded":
+        OutputHandler.print_unbounded(simplex)
 
 
 

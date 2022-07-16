@@ -10,9 +10,23 @@ class OutputHandler:
         print(simplex.status)
     
 
-    def print_optimal(simplex):
+    def print_optimal_value(simplex):
         float_optimal = float(simplex.optimal)
         print("{0:.7g}".format(float_optimal))
+
+
+    def print_optimal(simplex):
+        OutputHandler.print_status(simplex)
+        OutputHandler.print_optimal_value(simplex)
+        OutputHandler.print_points(simplex)
+
+
+    def print_unbounded(simplex):
+        OutputHandler.print_status(simplex)
+        
+
+    def print_infeasible(simplex):
+        OutputHandler.print_status(simplex)
 
 
     def print_points(simplex):
@@ -21,13 +35,6 @@ class OutputHandler:
             if var.is_point():
                 point_list.append("{0:.7g}".format(float(var.get_value())))
         print(*point_list)
-
-
-    def print_output(simplex):
-        OutputHandler.print_status(simplex)
-        if (simplex.status == "optimal"):
-            OutputHandler.print_optimal(simplex)
-            OutputHandler.print_points(simplex)
 
 
 

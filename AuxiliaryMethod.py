@@ -37,9 +37,22 @@ class AuxiliaryMethod(SimplexMethod):
         self.entering = self.get_variable_by_col(omega_col)
 
 
-    # TODO: Assumed omega is nonbasic. Will handle case if it arises
     def remove_omega(self):
         dictionary = []
+
+        # In case degeneracy makes Omega remain in the basis, perform an additional pivot
+        if (self.variables[len(self.variables)-1].is_in_basis()):
+
+            # Determine the value to be switched with Omega
+            entering_variable_col = None
+            for col in range(1, len(self.dictionary[0])):
+                if self.dictionary[0][col] != Fraction(0):
+                    leaving_variable_col = col
+                    
+            self.entering = self.get_variable_by_col(leaving_variable_col)
+            self.leaving = self.variables[len(self.variables) - 1]
+            self.pivot()
+
         # First, remove Omega Variable and fix index issues
         omega = self.variables.pop(len(self.variables) - 1)
         for i in range(omega.get_col() + 1, len(self.dictionary[0])):
