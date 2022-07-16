@@ -1,3 +1,6 @@
+# Name: Ty Ricard
+# Student no.: V00909036
+
 from fractions import Fraction
 from Variable import Variable
 from Dictionary import Dictionary

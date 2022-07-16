@@ -1,3 +1,6 @@
+# Name: Ty Ricard
+# Student no.: V00909036
+
 class Variable:
 
     def __init__(self, identifier, point, row, col):

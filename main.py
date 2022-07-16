@@ -1,3 +1,6 @@
+# Name: Ty Ricard
+# Student no.: V00909036
+
 import sys
 from InputParser import InputParser
 from Dictionary import Dictionary
