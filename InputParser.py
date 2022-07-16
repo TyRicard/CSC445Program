@@ -15,6 +15,14 @@ class InputParser:
         return arguments[1]
 
 
+    def split_by_whitespace(line):
+        if "\t" in line:
+            string_row = line.split("\t")
+        else:
+            string_row = line.split()
+        return string_row
+
+
     # Parsing the file for the necessary data
     def get_lp(file_name):
         file = open(file_name, 'r')
@@ -30,7 +38,7 @@ class InputParser:
             string_row = []
             lp_row = []
 
-            string_row = line.split("\t")
+            string_row = InputParser.split_by_whitespace(line)
             for coeff in string_row:
                 lp_row.append(Fraction(coeff))
             

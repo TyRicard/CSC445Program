@@ -10,6 +10,7 @@ class SimplexMethod:
         self.entering = None
         self.leaving = None
         self.optimal = None
+        self.degeneracy_counter = 0
         self.status = "incomplete"
 
 
@@ -38,6 +39,14 @@ class SimplexMethod:
         return self.leaving is None
 
 
+    def dictionary_has_degenerate_pivot(self):
+        leaving_row = self.leaving.get_row()
+        if self.dictionary[leaving_row][0] == Fraction(0):
+            return True
+        else:
+            return False
+
+
     def largest_coeff_entering(self):
         # There must be at least one coefficient that is positive; otherwise, it is optimal
         largest_coefficient = -1
@@ -56,29 +65,38 @@ class SimplexMethod:
                     self.entering = self.get_variable_by_col(i)
 
 
+    def blands_rule_entering(self):
+        # Go through variables looking for the smallest non-basic
+        for var in self.variables:
+            if not var.is_in_basis() and self.dictionary[0][var.get_col()] > 0:
+                self.entering = var
+                break
+
+
     def basic_leaving(self):
         is_unbounded = False
         # Note, if the largest increase < 0, then the LP is unbounded
-        largest_increase = None
-
+        increase = None
         for i in range(1, len(self.dictionary)):
-            
-            # Check for a coefficient of zero
-            if (self.dictionary[i][self.entering.get_col()] == Fraction(0)):
+
+            # Check for a coefficient of zero or unbounded
+            if (self.dictionary[i][self.entering.get_col()] >= Fraction(0)):
                 continue
-            
+                        
             # Note, the entering_variable_coefficient should never be zero (would be optimal)
             temp_val = (self.dictionary[i][0] /  self.dictionary[i][self.entering.get_col()]) * Fraction(-1)
 
             if temp_val < 0:
                 continue
             
-            if (largest_increase is None) or (temp_val < largest_increase):
-                largest_increase = temp_val
+            # Assign if increase is smaller than previous or nonexistent
+            if (increase is None) or (temp_val < increase):
+                increase = temp_val
                 self.leaving = self.get_variable_by_row(i)
             
-            elif temp_val == largest_increase:
-                if (self.get_variable_by_row(i).get_id()):
+            # Check for smallest id if tie
+            elif temp_val == increase:
+                if (self.get_variable_by_row(i).get_id() < self.leaving.get_id()):
                     self.leaving = self.get_variable_by_row(i)
 
 
@@ -155,17 +173,32 @@ class SimplexMethod:
     def run_basic_method(self):
         count = 0
         while(True):
+            # Check for Optimal
             if self.dictionary_is_optimal():
                 self.handle_optimal()
                 return
             
-            self.largest_coeff_entering()
+            # Use Bland's Rule if degenerate for several pivots
+            if self.degeneracy_counter >= 3:
+                self.blands_rule_entering()
+            else:
+                self.largest_coeff_entering()
+
+            # Determine leaving variable
             self.basic_leaving()
 
+            # Update degeneracy counter where required
+            if self.dictionary_has_degenerate_pivot():
+                self.degeneracy_counter = self.degeneracy_counter + 1
+            else:
+                self.degeneracy_counter = 0
+            
+            # Check for unboundedness
             if self.dictionary_is_unbounded():
                 self.handle_unbounded()
                 return
         
+            # Pivot
             self.pivot()
 
         
