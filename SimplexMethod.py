@@ -42,6 +42,7 @@ class SimplexMethod:
 
     def set_pivot_variables(self):
         # Use Bland's Rule if degenerate for several pivots
+
         if self.degeneracy_counter >= 3:
             self.blands_rule_entering()
             self.basic_leaving()
@@ -233,6 +234,8 @@ class SimplexMethod:
                 return
 
             # Update degeneracy counter where required
+            # The degeneracy_counter increments whenever a degenerate_pivot occurs
+            # and it zeroes whenever the pivot is not degenerate
             if self.dictionary_has_degenerate_pivot():
                 self.degeneracy_counter = self.degeneracy_counter + 1
             else:
