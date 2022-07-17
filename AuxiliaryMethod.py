@@ -8,8 +8,8 @@ from SimplexMethod import SimplexMethod
 # For Basic Inheritance Format: https://www.w3schools.com/python/python_inheritance.asp
 class AuxiliaryMethod(SimplexMethod):
 
-    def __init__(self, dictionary, variables):
-        super().__init__(dictionary, variables)
+    def __init__(self, dictionary, variables, pivot_rule):
+        super().__init__(dictionary, variables, pivot_rule)
         self.original_function = dictionary[0].copy()
 
 

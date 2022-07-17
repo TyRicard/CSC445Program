@@ -7,9 +7,10 @@ from Dictionary import Dictionary
 
 class SimplexMethod:
 
-    def __init__(self, dictionary, variables):
+    def __init__(self, dictionary, variables, pivot_rule):
         self.dictionary = dictionary
         self.variables = variables
+        self.pivot_rule = pivot_rule
         self.entering = None
         self.leaving = None
         self.optimal = None
@@ -39,12 +40,28 @@ class SimplexMethod:
             return False
 
 
+    def set_pivot_variables(self):
+        # Use Bland's Rule if degenerate for several pivots
+        if self.degeneracy_counter >= 3:
+            self.blands_rule_entering()
+            self.basic_leaving()
+
+        # The largest increase pivot rule can be run using the same method
+        elif self.pivot_rule == "Largest Increase":
+            self.largest_increase_entering_and_leaving()
+        
+        # Default using largest coefficient
+        else:
+            self.largest_coeff_entering()
+            self.basic_leaving()
+
+
     def largest_coeff_entering(self):
         # There must be at least one coefficient that is positive; otherwise, it is optimal
         largest_coefficient = -1
         for i in range(1, len(self.dictionary[0])):
             
-            if self.dictionary[0][i] <= 0:
+            if self.dictionary[0][i] <= Fraction(0):
                 continue
 
             elif self.dictionary[0][i] > largest_coefficient:
@@ -55,6 +72,43 @@ class SimplexMethod:
             elif self.dictionary[0][i] == largest_coefficient:
                 if (self.get_variable_by_col(i).get_id() < self.entering.get_id()):
                     self.entering = self.get_variable_by_col(i)
+
+
+    def largest_increase_entering_and_leaving(self):
+        # Iterate through the objective function coefficients looking for positives
+        largest_increase = None
+        largest_increase_indices = (None, None)
+
+        for i in range(1, len(self.dictionary[0])):
+
+            if self.dictionary[0][i] <= Fraction(0):
+                continue
+
+            # Assign entering and leaving before checking for difference
+            self.entering = self.get_variable_by_col(i)
+            self.basic_leaving()
+
+            # Handle Unbounded Case
+            if Dictionary.is_unbounded(self.leaving):
+                return
+
+            # Calculate the temporary increase (note, temp_val cannot be negative as unboundedness would have been caught)
+            temp_val = (self.dictionary[self.leaving.get_row()][0] /  self.dictionary[self.leaving.get_row()][self.entering.get_col()]) * Fraction(-1)
+            temp_increase = self.dictionary[0][self.entering.get_col()] * temp_val
+
+            # Update if necessary
+            if (largest_increase is None) or (temp_increase > largest_increase):
+                largest_increase = temp_increase
+                largest_increase_indices = (self.leaving.get_row(), self.entering.get_col())
+
+            # Use lowest variable if equal
+            elif temp_increase == largest_increase:
+                if (self.entering.get_id() < self.get_variable_by_col(largest_increase_indices[1]).get_id()):
+                    largest_increase_indices = (self.leaving.get_row(), self.entering.get_col())
+
+        # Lastly, assign entering and leaving using determined indices
+        self.entering = self.get_variable_by_col(largest_increase_indices[1])
+        self.leaving  = self.get_variable_by_row(largest_increase_indices[0])
 
 
     def blands_rule_entering(self):
@@ -170,20 +224,14 @@ class SimplexMethod:
                 self.handle_optimal()
                 return
             
-            # Use Bland's Rule if degenerate for several pivots
-            if self.degeneracy_counter >= 3:
-                self.blands_rule_entering()
-            else:
-                self.largest_coeff_entering()
-
-            # Determine leaving variable
-            self.basic_leaving()
+            # Set the entering and leaving variable depending on criteria
+            self.set_pivot_variables()
 
             # Check for unboundedness
             if Dictionary.is_unbounded(self.leaving):
                 self.handle_unbounded()
                 return
-                
+
             # Update degeneracy counter where required
             if self.dictionary_has_degenerate_pivot():
                 self.degeneracy_counter = self.degeneracy_counter + 1

@@ -9,13 +9,14 @@ from AuxiliaryMethod import AuxiliaryMethod
 from OutputHandler import OutputHandler
 
 def main():
+    pivot_rule = InputParser.get_pivot_rule(sys.argv)
     standard_lp = InputParser.get_lp()
 
     dictionary = Dictionary.create_dictionary_form(standard_lp)
     variables =  Dictionary.create_variables(dictionary)
 
     if Dictionary.is_infeasible(dictionary):
-        aux_simplex = AuxiliaryMethod(dictionary, variables)
+        aux_simplex = AuxiliaryMethod(dictionary, variables, pivot_rule)
         aux_simplex.run_auxiliary()
 
         if aux_simplex.status == "infeasible":
@@ -25,7 +26,7 @@ def main():
         dictionary = aux_simplex.dictionary
         variables = aux_simplex.variables
 
-    simplex = SimplexMethod(dictionary, variables)
+    simplex = SimplexMethod(dictionary, variables, pivot_rule)
 
     simplex.run_simplex()
 
@@ -34,8 +35,6 @@ def main():
 
     elif simplex.status == "unbounded":
         OutputHandler.print_unbounded(simplex)
-
-
 
 if __name__ == "__main__":
     main()

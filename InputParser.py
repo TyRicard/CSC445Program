@@ -6,6 +6,26 @@ import sys
 
 class InputParser:
 
+    # Simple conditionals checking for the file_name
+    def get_pivot_rule(arguments):
+        pivot_rule = None
+
+        if len(arguments) > 2:
+            print("Too many arguments were provided")
+            exit(1)
+
+        elif len(arguments) < 2 or arguments[1] == "-c":
+            pivot_rule = "Largest Coefficient"
+            
+        elif arguments[1] == "-i":
+            pivot_rule = "Largest Increase"
+
+        else:
+            print("The Flag Provided is not valid")
+            exit(1)
+            
+        return pivot_rule
+
     def split_by_whitespace(line):
         if "\t" in line:
             string_row = line.split("\t")
