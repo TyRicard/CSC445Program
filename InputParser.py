@@ -67,7 +67,12 @@ class InputParser:
 
             string_row = InputParser.split_by_whitespace(line)
             for coeff in string_row:
-                lp_row.append(Fraction(coeff))
+                # This handles the case that input is not in a valid format
+                try:
+                    lp_row.append(Fraction(coeff))
+                except ValueError:
+                    sys.stderr.write("The LP provided is not in a readable format\n")
+                    exit(1)
             
             if is_first:
                 lp_row.append(Fraction(0, 1))
