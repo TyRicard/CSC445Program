@@ -8,23 +8,40 @@ class InputParser:
 
     # Simple conditionals checking for the file_name
     def get_pivot_rule(arguments):
+        initialization_approach = None
         pivot_rule = None
 
-        if len(arguments) > 2:
+        if len(arguments) > 3:
             print("Too many arguments were provided")
             exit(1)
 
-        elif len(arguments) < 2 or arguments[1] == "-c":
-            pivot_rule = "Largest Coefficient"
-            
-        elif arguments[1] == "-i":
-            pivot_rule = "Largest Increase"
+        # Set the Flags if applicable
+        for arg_index in range(1, len(arguments)):
+            if (arguments[arg_index] == "-coeff") and (pivot_rule is None):
+                pivot_rule = "Largest Coefficient"
 
-        else:
-            print("The Flag Provided is not valid")
-            exit(1)
+            elif (arguments[arg_index] == "-inc") and (pivot_rule is None):
+                pivot_rule = "Largest Increase"
             
-        return pivot_rule
+            elif (arguments[arg_index] == "-aux") and (initialization_approach is None):
+                initialization_approach = "Auxiliary"
+
+            elif (arguments[arg_index] == "-dual") and (initialization_approach is None):
+                initialization_approach = "Dual"
+
+            else:
+                print("The Flag Provided is not valid or is a duplicate")
+                exit(1)
+
+        # Assign defaults if necessary
+        if pivot_rule is None:
+            pivot_rule = "Largest Coefficient"
+
+        if initialization_approach is None:
+            initialization_approach = "Auxiliary"
+            
+        return (pivot_rule, initialization_approach)
+
 
     def split_by_whitespace(line):
         if "\t" in line:

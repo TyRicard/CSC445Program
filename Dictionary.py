@@ -52,10 +52,17 @@ class Dictionary:
 
 
     def is_infeasible(dictionary):
-        for row in dictionary:
-            if row[0] < Fraction(0):
+        for i in range(1, len(dictionary)):
+            if dictionary[i][0] < Fraction(0):
                 return True
         return False
+
+
+    def is_completely_degenerate(dictionary):
+        for i in range(1, len(dictionary)):
+            if dictionary[i][0] != Fraction(0):
+                return False
+        return True
         
 
         
