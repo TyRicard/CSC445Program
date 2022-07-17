@@ -106,6 +106,10 @@ class SimplexMethod:
             elif temp_increase == largest_increase:
                 if (self.entering.get_id() < self.get_variable_by_col(largest_increase_indices[1]).get_id()):
                     largest_increase_indices = (self.leaving.get_row(), self.entering.get_col())
+            
+            # Make the entering and leaving be None for next iteration
+            self.entering = None
+            self.leaving  = None
 
         # Lastly, assign entering and leaving using determined indices
         self.entering = self.get_variable_by_col(largest_increase_indices[1])
