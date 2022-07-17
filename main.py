@@ -35,6 +35,7 @@ def main():
         else:
             dual_simplex = DualMethod(dictionary, variables, pivot_rule)
         
+            # If the dual is infeasible or it is completely degenerate (weird cycling occurs otherwise), run initialization
             if Dictionary.is_infeasible(dual_simplex.dictionary) or Dictionary.is_completely_degenerate(dual_simplex.dictionary):
                 dual_simplex.run_initialization()
             else:

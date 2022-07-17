@@ -12,7 +12,7 @@ class InputParser:
         pivot_rule = None
 
         if len(arguments) > 3:
-            print("Too many arguments were provided")
+            sys.stderr.write("Too many arguments were provided\n")
             exit(1)
 
         # Set the Flags if applicable
@@ -30,7 +30,7 @@ class InputParser:
                 initialization_approach = "Dual"
 
             else:
-                print("The Flag Provided is not valid or is a duplicate")
+                sys.stderr.write("The Flag Provided is not valid or is a duplicate\n")
                 exit(1)
 
         # Assign defaults if necessary
@@ -72,6 +72,11 @@ class InputParser:
             if is_first:
                 lp_row.append(Fraction(0, 1))
                 is_first = False
+
+            # Check for consistency in LP columns
+            elif len(lp_row) != len(lp[0]):
+                sys.stderr.write("The LP provided has conflicting dimensions\n")
+                exit(1)
 
             lp.append(lp_row)
         
