@@ -6,7 +6,9 @@ from Variable import Variable
 from SimplexMethod import SimplexMethod
 from Dictionary import Dictionary
 
-# For Basic Inheritance Format: https://www.w3schools.com/python/python_inheritance.asp
+# For Basic Inheritance Format: 
+#   [1] w3schools Contributors. "Python Inheritance."
+#       Available: https://www.w3schools.com/python/python_inheritance.asp
 class DualMethod(SimplexMethod):
 
     def __init__(self, dictionary, variables, pivot_rule):
@@ -22,7 +24,7 @@ class DualMethod(SimplexMethod):
 
 
     def convert_dictionary(self):
-        # This essentially does the 
+        # This essentially does the negative transpose calculation
         temp_dictionary = []
         temp_row = []
 
@@ -38,7 +40,8 @@ class DualMethod(SimplexMethod):
 
     def map_dual_variable_to_primal(self):
         num_variables = len(self.variables)
-        num_points = len(self.primal_function) - 1     # Subtract by one to account for constant
+        # Subtract by one to account for constant
+        num_points = len(self.primal_function) - 1
         num_slack = num_variables - num_points
         diff_points_slack = num_points - num_slack
 

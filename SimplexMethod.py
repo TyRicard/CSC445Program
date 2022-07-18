@@ -5,6 +5,7 @@ from fractions import Fraction
 from Variable import Variable
 from Dictionary import Dictionary
 
+# Note, the lecture notes helped in producing this simplex method.
 class SimplexMethod:
 
     def __init__(self, dictionary, variables, pivot_rule):
@@ -33,6 +34,7 @@ class SimplexMethod:
 
 
     def dictionary_has_degenerate_pivot(self):
+        # Check the leaving variable's constant to see if it is zero
         leaving_row = self.leaving.get_row()
         if self.dictionary[leaving_row][0] == Fraction(0):
             return True
@@ -183,12 +185,16 @@ class SimplexMethod:
 
 
     def pivot(self):
+        # Create the sub_constraint for restructuring
         sub_constraint = self.create_sub_constraint()
 
         for i in range(0, len(self.dictionary)):
             sub_constraint_copy = sub_constraint.copy()
+            # if it is the leaving variable row, just assign it the sub_constraint
             if i == self.leaving.get_row():
                 self.dictionary[i] = sub_constraint_copy
+            
+            # Otherwise, restructure the row to account for the sub_constraint
             else:
                 self.restructure_constraint(sub_constraint_copy, i)
 
@@ -199,6 +205,7 @@ class SimplexMethod:
         entering_col = self.entering.get_col()
         leaving_row = self.leaving.get_row()
 
+        # Update the variables, and then set leaving/entering to None for simplicity
         self.entering.pivot_variable(leaving_row, -1)
         self.leaving.pivot_variable(-1, entering_col)
         self.entering = None
@@ -212,6 +219,8 @@ class SimplexMethod:
         self.optimal = self.dictionary[0][0]
         
         for var in self.variables:
+            # if the variable is a point, set the constant if it is in the basis
+            # Otherwise, set zero
             if var.is_point():
                 if var.is_in_basis():
                     var.set_value(self.dictionary[var.get_row()][0])

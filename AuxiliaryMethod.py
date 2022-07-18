@@ -5,7 +5,9 @@ from fractions import Fraction
 from Variable import Variable
 from SimplexMethod import SimplexMethod
 
-# For Basic Inheritance Format: https://www.w3schools.com/python/python_inheritance.asp
+# For Basic Inheritance Format: 
+#   [1] w3schools Contributors. "Python Inheritance."
+#       Available: https://www.w3schools.com/python/python_inheritance.asp
 class AuxiliaryMethod(SimplexMethod):
 
     def __init__(self, dictionary, variables, pivot_rule):
@@ -13,6 +15,7 @@ class AuxiliaryMethod(SimplexMethod):
         self.original_function = dictionary[0].copy()
 
 
+    # This is done to produce a zeroed objective function
     def zero_objective_function(self):
         for col in range(0, len(self.dictionary[0])):
             self.dictionary[0][col] = Fraction(0)
@@ -124,11 +127,13 @@ class AuxiliaryMethod(SimplexMethod):
         self.pivot()
 
 
+    # Execute to remove omega and return the objective function
     def closedown(self):
         self.remove_omega()
         self.recreate_objective_function()
 
 
+    # If the auxiliary dictionary is non-zero, the dictionary is infeasible
     def auxiliary_is_infeasible(self):
         return (self.status == "unbounded") or (self.dictionary[0][0] != Fraction(0))
 
@@ -138,6 +143,7 @@ class AuxiliaryMethod(SimplexMethod):
         return
 
     
+    # This method is called by main
     def run_auxiliary(self):
         self.setup()
         self.run_simplex()

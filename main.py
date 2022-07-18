@@ -17,6 +17,9 @@ def main():
     variables =  Dictionary.create_variables(dictionary)
 
     if Dictionary.is_infeasible(dictionary):
+
+        # If the initialization approach was Auxiliary, run the Auxiliary problem and 
+        # check for feasibility
         if initialization_approach == "Auxiliary":
             aux_simplex = AuxiliaryMethod(dictionary, variables, pivot_rule)
             aux_simplex.run_auxiliary()
@@ -25,6 +28,7 @@ def main():
                 OutputHandler.print_infeasible(aux_simplex)
                 exit(0)
 
+            # Need to update dictionary and variables for Simplex Method
             dictionary = aux_simplex.dictionary
             variables = aux_simplex.variables
         
@@ -38,6 +42,8 @@ def main():
             # If the dual is infeasible or it is completely degenerate (weird cycling occurs otherwise), run initialization
             if Dictionary.is_infeasible(dual_simplex.dictionary) or Dictionary.is_completely_degenerate(dual_simplex.dictionary):
                 dual_simplex.run_initialization()
+
+            # Else, the dual is feasible and run the Dual Simplex Method
             else:
                 dual_simplex.run_dual_simplex()
     
@@ -45,10 +51,11 @@ def main():
                 OutputHandler.print_infeasible(dual_simplex)
                 exit(0)
 
+            # Need to update dictionary and variables for Simplex Method
             dictionary = dual_simplex.dictionary
             variables = dual_simplex.variables
 
-
+    # Initialization Simplex Method using Dictionary, variabkes, and pivot_rule
     simplex = SimplexMethod(dictionary, variables, pivot_rule)
 
     simplex.run_simplex()

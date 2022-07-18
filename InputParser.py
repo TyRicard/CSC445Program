@@ -15,7 +15,8 @@ class InputParser:
             sys.stderr.write("Too many arguments were provided\n")
             exit(1)
 
-        # Set the Flags if applicable
+        # Set the Flags if applicable. Duplicate flags are not allowed, and it cannot be 
+        # both largest_coefficient/largest_increase or both dual/auxiliary.
         for arg_index in range(1, len(arguments)):
             if (arguments[arg_index] == "-coeff") and (pivot_rule is None):
                 pivot_rule = "Largest Coefficient"
@@ -43,6 +44,7 @@ class InputParser:
         return (pivot_rule, initialization_approach)
 
 
+    # This method must check for tabs and spaces
     def split_by_whitespace(line):
         if "\t" in line:
             string_row = line.split("\t")
@@ -60,7 +62,9 @@ class InputParser:
 
         # For each row of the string, get the coefficients, and append to the LP
         # Note, for the objective function, append a zero for easy conversion to a dictionary
-        # For fractions: https://docs.python.org/3/library/fractions.html
+        # For fractions:
+        #   [1] Python Contributors. "Fractions."
+        #       Available: https://docs.python.org/3/library/fractions.html
         for line in lp_string_lines:
             string_row = []
             lp_row = []
@@ -74,6 +78,7 @@ class InputParser:
                     sys.stderr.write("The LP provided is not in a readable format\n")
                     exit(1)
             
+            # For the objective function, append a zero for easier conversion to dictionary
             if is_first:
                 lp_row.append(Fraction(0, 1))
                 is_first = False

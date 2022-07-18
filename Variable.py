@@ -16,7 +16,7 @@ class Variable:
         string = "(id: " + str(self.id) + ", row: " + str(self.row) + ", col: " + str(self.col) + ")"
         return string
 
-
+    # Below is a list of Getters and Setters useful for the program
     def get_id(self):
         return self.id
 
@@ -56,7 +56,7 @@ class Variable:
     def set_value(self, new_value):
         self.value = new_value
  
-
+    # Update an individual variable after a pivot
     def pivot_variable(self, row, col):
         self.set_row(row)
         self.set_col(col)
