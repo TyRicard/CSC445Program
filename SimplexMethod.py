@@ -151,6 +151,8 @@ class SimplexMethod:
                     self.leaving = self.get_variable_by_row(i)
 
 
+    # This method re-orders a given constraint of the dictionary such that the entering
+    # variable enters the basis
     def create_sub_constraint(self):
         entering_col = self.entering.get_col()
         leaving_row = self.leaving.get_row()
@@ -203,6 +205,8 @@ class SimplexMethod:
         self.leaving = None
 
 
+    # This method handles the optimal case, and includes assigning the 
+    # optimization variables their expected values
     def handle_optimal(self):
         self.status = "optimal"
         self.optimal = self.dictionary[0][0]

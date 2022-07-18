@@ -27,7 +27,7 @@ optimal
 As an aside, on a couple files, the assignmts for the optimization variables differed from the expected values, but this could be explained as multiple points producing the optimal value.
 
 ## Software Architecture
-To discuss the Software Architecture, several sections will be used: the sections are (1) Program Source Files, (2) Test Scenarios, and (3) Additional Information.
+To discuss the Software Architecture, several sections will be used: the sections are (1) Program Source Files, (2) Test Scenarios, and (3) Architecture Summary.
 
 ### Program Source Files
 As expected, several source files were used throughout the course of this project, and a brief description of each source file is provided below. Note, these are the files used for the basic program, and therefore, the files associated with extra features are ignored.
@@ -105,6 +105,39 @@ Concluding `run_simplex()`, the necessary information is outputted.
 #### Initially-Infeasible Linear Program
 This scenario would occur when the Linear Program is initially infeasible, and there are no degenerate constraints. In `main.py`, the initially-infeasible dictionary would cause the Auxiliary Method to be run (ignoring the extra feature). The Auxiliary Method workflow is best shown through the method `run_auxiliary()` in `AuxiliaryMethod.py`. The method does the following:
 
-1.  
+1.  Setup the Auxiliary Dictionary by doing the following:
+    1. Making the Objective Function be composed of zeroes
+    2. Add the Omega variable to the dictionary and variable list
+    3. Find the most infeasible constraint and pivot with Omega
+2.  Run the Simplex Method
+3.  Close Down the Auxiliary Dictionary by doing the following:
+    1. Remove the Omega Variable
+    2. Re-construct the objective function
+
+Note, if the optimal objective value of the Auxiliary Dictionary does not equal zero, then the dictionary is declared `"infeasible"`.
+
+#### Degenerate Linear Program
+This scenario differs from the average linear program because there are degenerate constraints. With degenerate constraints, there is the possibility of cycling, and therefore, this scenario attempts to show how the program handles cycling. After a degenerate pivot has occurred, the `degeneracy_counter` of the `SimplexMethod` class is updated using the subsequent code:
+
+```
+if self.dictionary_has_degenerate_pivot():
+    self.degeneracy_counter = self.degeneracy_counter + 1
+else:
+    self.degeneracy_counter = 0
+```
+
+Looking at the method `set_pivot_variables()`, if the `degeneracy_counter` exceeds two, then the method `blands_rule_entering()` is called. The method determines the entering variable based on Bland's rule. Bland's rule will continue to run until a pivot is not degenerate. From lecture, it is known that cycling will not occur with Bland's rule, and therefore, switching to that rule after several degenerate pivots would prevent cycling from occurring in the program. 
+
+### Architecture Summary
+While most of the architecture was touched on, it may be beneficial to include a brief summary of important architectural decisions:
+
+* The code was written in Python.
+* Dictionaries are represented as two-dimensionsal lists composed of Fractions. Rational Representation is used.
+* The Auxiliary Dictionary is used in the case of an initially-infeasible Linear Program
+* The Largest Coefficient Rule was used as the default pivot rule unless several degenerate pivots had occurred, in which case the pivot rule is Bland's rule.
+* Bland's rule can be adopted to prevent cycling.
+
+
+
 
 
