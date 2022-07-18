@@ -151,7 +151,7 @@ To use the Largest-Increase Rule instead of the Largest-Coefficient Rule, the `-
 
 `python3 main.py -inc < test_file.txt`
 
-Please note, the Largest-Increase Rule was not set to the default because the computation of the largest increase may be more extensive than just taking the largest coefficient.
+Please note, the Largest-Increase Rule was not set to the default because the computation of the largest increase may be more extensive than just taking the largest coefficient. To show that this feature works, run a similar test suite as the Largest-Coefficient Rule. Note, it is hard to show that this method is running unless providing additional output, which is not allowed.
 
 #### Implementation
 The implementation of the Largest-Increase Rule is shown in the method `largest_increase_entering_and_leaving()` found in the `SimplexMethod.py` file. Note, there are additional components to this feature, such as handling the input flag, but the method `largest_increase_entering_and_leaving()` appeared to be the most crucial. The method follows the subsequent procedure:
@@ -174,7 +174,7 @@ To use the Primal-Dual Method instead of the Auxiliary Method, the `-dual` flag 
 
 `python3 main.py -dual < test_file.txt`
 
-Please note, the Primal-Dual Method was not set to the default because the Primal-Dual Method can have more complicated logic than the Auxiliary Problem.
+Please note, the Primal-Dual Method was not set to the default because the Primal-Dual Method can have more complicated logic than the Auxiliary Problem. To show that this method works, use files that have either infeasible LPs or are initially infeasible.
 
 #### Implementation
 The major component of the implementation was the introduction of the file `DualMethod.py`, which includes the `DualMethod` class. Moreover, the `DualMethod` class inherits from the `SimplexMethod` class, but includes some additional fields and methods. The additional fields are the following:
