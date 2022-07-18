@@ -1,3 +1,6 @@
+**student name**: Ty Ricard
+**student no.**: V00909036
+
 # CSC 445 Programming Assignment
 The programming assignment description is separated into several sections; the sections are as followed:
 * Running Program
@@ -137,7 +140,58 @@ While most of the architecture was touched on, it may be beneficial to include a
 * The Largest Coefficient Rule was used as the default pivot rule unless several degenerate pivots had occurred, in which case the pivot rule is Bland's rule.
 * Bland's rule can be adopted to prevent cycling.
 
+## Extra Features
+The extra features used for this program were (1) Largest-Increase Rule, and (2) Primal-Dual Methods.
 
+### Largest-Increase Rule
+The Largest-Increase Rule will be described through its execution and through its implementation.
 
+#### Execution
+To use the Largest-Increase Rule instead of the Largest-Coefficient Rule, the `-inc` flag must be included on the command line. An example command using the Largest-Increase Rule is provided below:
 
+`python3 main.py -inc < test_file.txt`
 
+Please note, the Largest-Increase Rule was not set to the default because the computation of the largest increase may be more extensive than just taking the largest coefficient.
+
+#### Implementation
+The implementation of the Largest-Increase Rule is shown in the method `largest_increase_entering_and_leaving()` found in the `SimplexMethod.py` file. Note, there are additional components to this feature, such as handling the input flag, but the method `largest_increase_entering_and_leaving()` appeared to be the most crucial. The method follows the subsequent procedure:
+
+1. Create `largest_increase` and `largest_increase_indices` variables
+2. While iterating through the columns of the objective function
+    1. If the column's coefficient is negative, iterate to the next column
+    2. Set the entering variable to be the column
+    3. Using `basic_leaving()` to determine the leaving variable. If the leaving variable is `None`, the dictionary is unbounded and return.
+    4. Determine the possible increase associated with the entering and leaving variables
+    5. If the increase is greater than the `largest_increase`, update the `largest_increase` and set the `largest_increase_indices` to be a tuple of the leaving variable's row and entering variable's column.
+    5. Assign the entering and leaving variables to be `None` for the next iteration.
+3. Assign the entering and leaving variable using the `largest_increase_indices`
+
+### Primal-Dual Method
+The Primal-Dual Method will be described through its execution and through its implementation.
+
+#### Execution
+To use the Primal-Dual Method instead of the Auxiliary Method, the `-dual` flag must be included on the command line. An example command using the Primal-Dual Method is provided below:
+
+`python3 main.py -dual < test_file.txt`
+
+Please note, the Primal-Dual Method was not set to the default because the Primal-Dual Method can have more complicated logic than the Auxiliary Problem.
+
+#### Implementation
+The major component of the implementation was the introduction of the file `DualMethod.py`, which includes the `DualMethod` class. Moreover, the `DualMethod` class inherits from the `SimplexMethod` class, but includes some additional fields and methods. The additional fields are the following:
+
+* **primal_function**: This field is a list containing the coefficients associated with the objective function of the primal dictionary.
+* **primal_variables**: This field is a list containing the variables associated with the primal dictionary. The variables can be mapped to the variables of the dual dictionary.
+
+The methods introduced in the `DualMethod` class are the following:
+
+* **convert_dictionary()**: This method is called during the initialization of a `DualMethod` instance and at the completion of either `run_dual_simplex()` or `run_initialization()`. The method takes a primal dictionary, and calculates the dual dictionary or vice versa. In other words, it takes a dictionary and does the negative-transpose on that dictionary to get another dictionary.
+
+* **map_dual_variable_to_primal()**: This method is called near the completion of either `run_dual_simplex()` or `run_initialization()`. Essentially, the program iterates through the variables associated with the dual dictionary, and maps those variables to the primal variables. By producing this mapping, the primal variables' rows and columns can be updated after the dual has completed pivoting. Updates made to the optimization and slack variables differ greatly.
+
+* **recreate_objective_function()**: This method is called near the completion of `run_initialization()`. Since the dual initialization process produces an invalid objective function, a new objective function must be created. This method goes through the primal optimization variables (updated after pivoting on the dual) and checks to see if the variables are still not in the basis. If the variable is non-basic, then the coefficient associated with that variable is equal to its coefficient in the original `primal_function`. If the variable is basic, the variable's row is multipled by the coefficient in the original `primal_function`, and the objective function adds the product to its elements. Note, this method was taken from the `AuxiliaryMethod` class. 
+
+* **run_dual_simplex()**: This method is executed when the dual dictionary for an infeasible primal dictionary is feasible. In essence, the simplex method is executed, and the dual dictionary is converted back to the primal dictionary. Note, the conversion back to the primal method would produce an optimal dictionary, and therefore, when the Simplex method is later called on the dictionary, it should quickly choose the optimal status. Lastly, if the dual dictionary produces an unbounded value, the primal dictionary is infeasible.
+
+* **run_initialization()**: This method is similar to the method `run_dual_simplex()`, but the duals' constants are made to be 1. This is similar to the dual initialization that occurred in lecture, wherein the primal objective function was updated to be zeroes, making the dual dictionary feasible. However, constants of 1 made operations easier, and it seemed easier to just update the dual dictionary instead of editing the primal dictionary. Next, the Simplex Method is run. Lastly, the dual dictionary is converted back to a primal dictionary. If the dual dictionary produces an unbounded balue, the primal dictionary is infeasible.
+
+To conclude discussion of the dual method, it is worth noting the conditions required to execute `run_dual_simplex()` or `run_initialization()`. Firstly, the flag `-dual` must be used, resulting in the dual method being used over the auxiliary problem. If the dual dictionary is feasible, `run_dual_simplex()` is run, and an optimal/infeasible primal dictionary is reached. If this updated primal dictionary is optimal, the dictionary will be quickly passed through the Simplex method and `"optimal"` will be printed. If the dual dictionary is infeasible, `run_initialization()` is run, and if possible, a new primal dictionary will be produced. Note, this dictionary most likely will not be optimal, and therefore, executing the regular Simplex Method is still required.
